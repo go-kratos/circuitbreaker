@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	_group = &group{}
+	_group = &Group{New: func() CircuitBreaker { return New() }}
 	// ErrNotAllowed error not allowed.
 	ErrNotAllowed = errors.New("circuitbreaker: not allowed for circuit open")
 )
@@ -57,12 +57,16 @@ func New(opts ...Options) CircuitBreaker {
 	return nil
 }
 
-type group struct {
+// Group .
+type Group struct {
 	mutex sync.Mutex
 	val   atomic.Value
+
+	New func() CircuitBreaker
 }
 
-func (g *group) Get(name string) CircuitBreaker {
+// Get .
+func (g *Group) Get(name string) CircuitBreaker {
 	v := g.val.Load().(map[string]CircuitBreaker)
 	cb, ok := v[name]
 	if ok {
@@ -74,7 +78,7 @@ func (g *group) Get(name string) CircuitBreaker {
 	for i, j := range v {
 		nv[i] = j
 	}
-	cb = New()
+	cb = g.New()
 	nv[name] = cb
 	g.val.Store(nv)
 	g.mutex.Unlock()
