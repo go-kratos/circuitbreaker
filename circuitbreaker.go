@@ -93,7 +93,7 @@ func New(opts ...Options) CircuitBreaker {
 	for _, opt := range opts {
 		opt(options)
 	}
-	return nil
+	return newGoogleBreaker(options) // TODO: chose hystrix by options.
 }
 
 // Group .
