@@ -10,7 +10,7 @@ import (
 var (
 	_group = &Group{New: func() CircuitBreaker { return New() }}
 	// default circuitbreaker options.
-	_options = &options{
+	_options = options{
 		Success: 0.5,
 		Request: 50,
 		Window:  3 * time.Second,
@@ -88,10 +88,9 @@ func Success(s float64) Options {
 
 // New .
 func New(opts ...Options) CircuitBreaker {
-	options := new(options)
-	*options = *_options // copy from default options
+	options := _options // copy from default options
 	for _, opt := range opts {
-		opt(options)
+		opt(&options)
 	}
 	return newGoogleBreaker(options) // TODO: chose hystrix by options.
 }

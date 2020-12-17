@@ -13,13 +13,13 @@ type googleBreaker struct {
 	// rand.New(...) returns a non thread safe object
 	randLock sync.Mutex
 
-	opts *options
+	opts options
 	k    float64
 
 	state State
 }
 
-func newGoogleBreaker(opts *options) CircuitBreaker {
+func newGoogleBreaker(opts options) CircuitBreaker {
 	return &googleBreaker{
 		r: rand.New(rand.NewSource(time.Now().UnixNano())),
 
